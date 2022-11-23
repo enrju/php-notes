@@ -14,6 +14,33 @@ spl_autoload_register(function (string $classNamespace) {
 });
 
 require_once("src/Utils/debug.php");
+$configuration = require_once("config/config.php");
 
-dump("Hello PHP");
-dump([1, 2, 3]);
+use App\Model\NoteModel;
+
+
+$noteModel = new NoteModel($configuration['db']);
+
+$note = $noteModel->get(12);
+dump($note);
+
+$notes = $noteModel->list();
+dump($notes);
+
+$insertedId = $noteModel->create([
+    'title' => '--- testowy ---',
+    'description' => '--- tester ---'
+]);
+dump($insertedId);
+
+dump($noteModel->get($insertedId));
+$noteModel->edit(
+    $insertedId,
+    [
+        'title' => '--- testowy --- edited',
+        'description' => '--- tester --- edited'
+    ]
+);
+dump($noteModel->get($insertedId));
+
+$noteModel->delete($insertedId);
