@@ -20,3 +20,6 @@ use App\Model\NoteModel;
 
 
 $noteModel = new NoteModel($configuration['db']);
+
+$note = $noteModel->get(12);
+dump($note);
