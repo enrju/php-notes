@@ -91,8 +91,12 @@ class NoteModel extends AbstractModel implements ModelInterface
 
     public function delete(int $id): void
     {
-        $query = "DELETE FROM notes WHERE id = $id LIMIT 1";
+        try {
+            $query = "DELETE FROM notes WHERE id = $id LIMIT 1";
 
-        $this->conn->exec($query);
+            $this->conn->exec($query);
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się skasować notatki', 400, $e);
+        }
     }
 }
