@@ -73,16 +73,20 @@ class NoteModel extends AbstractModel implements ModelInterface
 
     public function edit(int $id, array $data): void
     {
-        $title = $data['title'];
-        $description = $data['description'];
+        try {
+            $title = $data['title'];
+            $description = $data['description'];
 
-        $query = "
-        UPDATE notes
-        SET title = '$title', description = '$description'
-        WHERE id = $id
-        ";
+            $query = "
+            UPDATE notes
+            SET title = '$title', description = '$description'
+            WHERE id = $id
+            ";
 
-        $this->conn->exec($query);
+            $this->conn->exec($query);
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się zmodyfikować notatki', 400, $e);
+        }
     }
 
     public function delete(int $id): void
