@@ -12,7 +12,7 @@ interface ModelInterface
 
     public function create(array $data): int;
 
-    // public function edit(int $id, array $data): void;
+    public function edit(int $id, array $data): void;
 
     // public function delete(int $id): void;
 }

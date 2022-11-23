@@ -32,3 +32,13 @@ $insertedId = $noteModel->create([
     'description' => '--- tester ---'
 ]);
 dump($insertedId);
+
+dump($noteModel->get($insertedId));
+$noteModel->edit(
+    $insertedId,
+    [
+        'title' => '--- testowy --- edited',
+        'description' => '--- tester --- edited'
+    ]
+);
+dump($noteModel->get($insertedId));

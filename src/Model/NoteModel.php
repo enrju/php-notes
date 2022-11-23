@@ -51,4 +51,18 @@ class NoteModel extends AbstractModel implements ModelInterface
 
         return (int) $this->conn->lastInsertId();
     }
+
+    public function edit(int $id, array $data): void
+    {
+        $title = $data['title'];
+        $description = $data['description'];
+
+        $query = "
+        UPDATE notes
+        SET title = '$title', description = '$description'
+        WHERE id = $id
+        ";
+
+        $this->conn->exec($query);
+    }
 }
