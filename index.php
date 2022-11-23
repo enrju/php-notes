@@ -47,7 +47,7 @@ try {
     $noteModel->delete($insertedId);
 
     // throw new Throwable('test wyjątku Throwable');
-    throw new AppException('test wyjątku AppException');
+    // throw new AppException('test wyjątku AppException');
 } catch (AppException $e) {
     echo '<h1>Wystąpił błąd w aplikacji</h1>';
     echo '<h3>' . $e->getMessage() . '</h3>';

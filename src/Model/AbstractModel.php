@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use App\Exception\StorageException;
 use PDO;
+use PDOException;
 
 abstract class AbstractModel
 {
@@ -12,7 +14,11 @@ abstract class AbstractModel
 
     public function __construct(array $config)
     {
-        $this->createConnection($config);
+        try {
+            $this->createConnection($config);
+        } catch (PDOException $e) {
+            throw new StorageException('Błąd połaczenia z DB');
+        }
     }
 
     private function createConnection(array $config): void
