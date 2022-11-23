@@ -53,18 +53,22 @@ class NoteModel extends AbstractModel implements ModelInterface
 
     public function create(array $data): int
     {
-        $title = $data['title'];
-        $description = $data['description'];
-        $created = date('Y-m-d H:i:s');
+        try {
+            $title = $data['title'];
+            $description = $data['description'];
+            $created = date('Y-m-d H:i:s');
 
-        $query = "
-        INSERT INTO notes(title, description, created)
-        VALUES('$title', '$description', '$created')
-        ";
+            $query = "
+            INSERT INTO notes(title, description, created)
+            VALUES('$title', '$description', '$created')
+            ";
 
-        $this->conn->exec($query);
+            $this->conn->exec($query);
 
-        return (int) $this->conn->lastInsertId();
+            return (int) $this->conn->lastInsertId();
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się utworzyć nowej notatki', 400, $e);
+        }
     }
 
     public function edit(int $id, array $data): void
