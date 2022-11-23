@@ -26,3 +26,9 @@ dump($note);
 
 $notes = $noteModel->list();
 dump($notes);
+
+$insertedId = $noteModel->create([
+    'title' => '--- testowy ---',
+    'description' => '--- tester ---'
+]);
+dump($insertedId);

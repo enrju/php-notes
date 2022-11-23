@@ -35,4 +35,20 @@ class NoteModel extends AbstractModel implements ModelInterface
 
         return $notes;
     }
+
+    public function create(array $data): int
+    {
+        $title = $data['title'];
+        $description = $data['description'];
+        $created = date('Y-m-d H:i:s');
+
+        $query = "
+        INSERT INTO notes(title, description, created)
+        VALUES('$title', '$description', '$created')
+        ";
+
+        $this->conn->exec($query);
+
+        return (int) $this->conn->lastInsertId();
+    }
 }
