@@ -27,7 +27,5 @@ abstract class AbstractModel
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]
         );
-
-        dump($this->conn);
     }
 }

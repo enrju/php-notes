@@ -21,4 +21,18 @@ class NoteModel extends AbstractModel implements ModelInterface
 
         return $note;
     }
+
+    public function list(): array
+    {
+        $query = "
+        SELECT id, title, created
+        FROM notes
+        ";
+
+        $result = $this->conn->query($query);
+
+        $notes = $result->fetchAll(PDO::FETCH_ASSOC);
+
+        return $notes;
+    }
 }

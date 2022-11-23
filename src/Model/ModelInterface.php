@@ -8,7 +8,7 @@ interface ModelInterface
 {
     public function get(int $id): array;
 
-    // public function list(): array;
+    public function list(): array;
 
     // public function create(array $data): void;
 
