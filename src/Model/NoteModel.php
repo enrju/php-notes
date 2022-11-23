@@ -35,16 +35,20 @@ class NoteModel extends AbstractModel implements ModelInterface
 
     public function list(): array
     {
-        $query = "
-        SELECT id, title, created
-        FROM notes
-        ";
+        try {
+            $query = "
+            SELECT id, title, created
+            FROM notes
+            ";
 
-        $result = $this->conn->query($query);
+            $result = $this->conn->query($query);
 
-        $notes = $result->fetchAll(PDO::FETCH_ASSOC);
+            $notes = $result->fetchAll(PDO::FETCH_ASSOC);
 
-        return $notes;
+            return $notes;
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się pobrać notatek', 400, $e);
+        }
     }
 
     public function create(array $data): int
