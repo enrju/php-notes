@@ -42,3 +42,5 @@ $noteModel->edit(
     ]
 );
 dump($noteModel->get($insertedId));
+
+$noteModel->delete($insertedId);

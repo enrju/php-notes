@@ -14,5 +14,5 @@ interface ModelInterface
 
     public function edit(int $id, array $data): void;
 
-    // public function delete(int $id): void;
+    public function delete(int $id): void;
 }

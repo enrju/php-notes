@@ -65,4 +65,11 @@ class NoteModel extends AbstractModel implements ModelInterface
 
         $this->conn->exec($query);
     }
+
+    public function delete(int $id): void
+    {
+        $query = "DELETE FROM notes WHERE id = $id LIMIT 1";
+
+        $this->conn->exec($query);
+    }
 }
