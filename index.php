@@ -14,6 +14,9 @@ spl_autoload_register(function (string $classNamespace) {
 });
 
 require_once("src/Utils/debug.php");
+$configuration = require_once("config/config.php");
 
-dump("Hello PHP");
-dump([1, 2, 3]);
+use App\Model\NoteModel;
+
+
+$noteModel = new NoteModel($configuration['db']);
