@@ -18,33 +18,53 @@ $configuration = require_once("config/config.php");
 
 use App\Exception\AppException;
 use App\Model\NoteModel;
+use App\Request;
 
 try {
     $noteModel = new NoteModel($configuration['db']);
+    $request = new Request($_GET, $_POST, $_SERVER);
 
-    $note = $noteModel->get(12);
-    dump($note);
+    $httpMethod = $request->getHTTPMethod();
+    $action = $request->getQueryStringParam('action');
+    $id = (int) ($request->getQueryStringParam('id'));
 
-    $notes = $noteModel->list();
-    dump($notes);
+    switch ($httpMethod) {
+        case 'GET':
+            switch ($action) {
+                case 'show':
+                    if ($id) {
+                        dump($noteModel->get($id));
+                    }
+                    break;
+                case 'list':
+                default:
+                    dump($noteModel->list());
+                    break;
+            }
+            break;
+        case 'POST':
+            break;
+        default:
+            throw new AppException('Nieobsługiwana metoda HTTP');
+    }
 
-    $insertedId = $noteModel->create([
-        'title' => '--- testowy ---',
-        'description' => '--- tester ---'
-    ]);
-    dump($insertedId);
+    // $insertedId = $noteModel->create([
+    //     'title' => '--- testowy ---',
+    //     'description' => '--- tester ---'
+    // ]);
+    // dump($insertedId);
 
-    dump($noteModel->get($insertedId));
-    $noteModel->edit(
-        $insertedId,
-        [
-            'title' => '--- testowy --- edited',
-            'description' => '--- tester --- edited'
-        ]
-    );
-    dump($noteModel->get($insertedId));
+    // dump($noteModel->get($insertedId));
+    // $noteModel->edit(
+    //     $insertedId,
+    //     [
+    //         'title' => '--- testowy --- edited',
+    //         'description' => '--- tester --- edited'
+    //     ]
+    // );
+    // dump($noteModel->get($insertedId));
 
-    $noteModel->delete($insertedId);
+    // $noteModel->delete($insertedId);
 
     // throw new Throwable('test wyjątku Throwable');
     // throw new AppException('test wyjątku AppException');
