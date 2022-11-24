@@ -76,7 +76,7 @@ try {
 
                     break;
                 case 'edit':
-                    $editedId = $request->getPostBodyParam('id');
+                    $editedId = (int)($request->getPostBodyParam('id'));
 
                     $noteModel->edit(
                         $editedId,

@@ -3,10 +3,13 @@
         <div class="message">
             <?php
             if (!empty($params['before'])) {
+                $id = $params['id'];
                 switch ($params['before']) {
                     case 'created':
-                        $id = $params['id'];
                         echo "Notatka została utworzona pod id: $id !!!";
+                        break;
+                    case 'edited':
+                        echo "Notatka o id: $id została zaktualizowana !!!";
                         break;
                 }
             }
