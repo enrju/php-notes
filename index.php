@@ -53,6 +53,19 @@ try {
             }
             break;
         case 'POST':
+            switch ($action) {
+                case 'create':
+                    $insertedId = $noteModel->create([
+                        'title' => $request->getPostBodyParam('title'),
+                        'description' => $request->getPostBodyParam('description')
+                    ]);
+                    // dump($insertedId);
+
+                    // $viewParams = [];
+
+                    header("Location: /?before=created&id=$insertedId");
+                    break;
+            }
             break;
         default:
             throw new AppException('Nieobsługiwana metoda HTTP');
@@ -60,11 +73,7 @@ try {
 
     $view->render($action, $viewParams);
 
-    // $insertedId = $noteModel->create([
-    //     'title' => '--- testowy ---',
-    //     'description' => '--- tester ---'
-    // ]);
-    // dump($insertedId);
+
 
     // dump($noteModel->get($insertedId));
     // $noteModel->edit(
