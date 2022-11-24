@@ -36,17 +36,22 @@ try {
                 case 'show':
                     $id = (int) ($request->getQueryStringParam('id'));
 
-                    if ($id) {
-                        $viewParams = [
-                            'note' => $noteModel->get($id)
-                        ];
+                    if (!$id) {
+                        header("Location: /?error=missingNoteId");
+                        exit();
                     }
+
+                    $viewParams = [
+                        'note' => $noteModel->get($id)
+                    ];
+
                     break;
                 case 'list':
                     $viewParams = [
                         'notes' => $noteModel->list(),
                         'before' => $request->getQueryStringParam('before'),
-                        'id' => $request->getQueryStringParam('id')
+                        'id' => $request->getQueryStringParam('id'),
+                        'error' => $request->getQueryStringParam('error')
                     ];
                     break;
                 case 'create':
@@ -55,12 +60,22 @@ try {
                 case 'edit':
                     $id = (int) ($request->getQueryStringParam('id'));
 
+                    if (!$id) {
+                        header("Location: /?error=missingNoteId");
+                        exit();
+                    }
+
                     $viewParams = [
                         'note' => $noteModel->get($id)
                     ];
                     break;
                 case 'delete':
                     $id = (int) ($request->getQueryStringParam('id'));
+
+                    if (!$id) {
+                        header("Location: /?error=missingNoteId");
+                        exit();
+                    }
 
                     $viewParams = [
                         'note' => $noteModel->get($id)
