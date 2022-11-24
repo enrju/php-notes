@@ -59,6 +59,13 @@ try {
                         'note' => $noteModel->get($id)
                     ];
                     break;
+                case 'delete':
+                    $id = (int) ($request->getQueryStringParam('id'));
+
+                    $viewParams = [
+                        'note' => $noteModel->get($id)
+                    ];
+                    break;
                 default:
                     break;
             }
