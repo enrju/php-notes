@@ -28,12 +28,14 @@ try {
 
     $httpMethod = $request->getHTTPMethod();
     $action = $request->getQueryStringParam('action', 'list');
-    $id = (int) ($request->getQueryStringParam('id'));
+    $viewParams = [];
 
     switch ($httpMethod) {
         case 'GET':
             switch ($action) {
                 case 'show':
+                    $id = (int) ($request->getQueryStringParam('id'));
+
                     if ($id) {
                         $viewParams = [
                             'note' => $noteModel->get($id)
@@ -50,6 +52,13 @@ try {
                 case 'create':
                     $viewParams = [];
                     break;
+                case 'edit':
+                    $id = (int) ($request->getQueryStringParam('id'));
+
+                    $viewParams = [
+                        'note' => $noteModel->get($id)
+                    ];
+                    break;
                 default:
                     break;
             }
@@ -63,6 +72,8 @@ try {
                     ]);
 
                     header("Location: /?before=created&id=$insertedId");
+                    exit();
+
                     break;
             }
             break;
