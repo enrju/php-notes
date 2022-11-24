@@ -11,6 +11,9 @@
                     case 'edited':
                         echo "Notatka o id: $id została zaktualizowana !!!";
                         break;
+                    case 'deleted':
+                        echo "Notatka o id: $id została skasowana !!!";
+                        break;
                 }
             }
             ?>
