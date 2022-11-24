@@ -97,6 +97,15 @@ try {
                     exit();
 
                     break;
+                case 'delete':
+                    $deletedId = (int)($request->getPostBodyParam('id'));
+
+                    $noteModel->delete($deletedId);
+
+                    header("Location: /?before=deleted&id=$deletedId");
+                    exit();
+
+                    break;
             }
             break;
         default:
