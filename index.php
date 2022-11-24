@@ -27,7 +27,7 @@ try {
     $view = new View();
 
     $httpMethod = $request->getHTTPMethod();
-    $action = $request->getQueryStringParam('action');
+    $action = $request->getQueryStringParam('action', 'list');
     $id = (int) ($request->getQueryStringParam('id'));
 
     switch ($httpMethod) {
@@ -40,7 +40,10 @@ try {
                     break;
                 case 'list':
                 default:
-                    dump($noteModel->list());
+                    // dump($noteModel->list());
+                    $viewParams = [
+                        'notes' => $noteModel->list()
+                    ];
                     break;
             }
             break;
@@ -50,7 +53,7 @@ try {
             throw new AppException('Nieobsługiwana metoda HTTP');
     }
 
-    $view->render($action);
+    $view->render($action, $viewParams);
 
     // $insertedId = $noteModel->create([
     //     'title' => '--- testowy ---',
