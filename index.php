@@ -75,6 +75,21 @@ try {
                     exit();
 
                     break;
+                case 'edit':
+                    $editedId = $request->getPostBodyParam('id');
+
+                    $noteModel->edit(
+                        $editedId,
+                        [
+                            'title' => $request->getPostBodyParam('title'),
+                            'description' => $request->getPostBodyParam('description')
+                        ]
+                    );
+
+                    header("Location: /?before=edited&id=$editedId");
+                    exit();
+
+                    break;
             }
             break;
         default:
