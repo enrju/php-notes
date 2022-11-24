@@ -1,5 +1,18 @@
 <div>
     <section>
+        <div class="message">
+            <?php
+            if (!empty($params['before'])) {
+                switch ($params['before']) {
+                    case 'created':
+                        $id = $params['id'];
+                        echo "Notatka została utworzona pod id: $id !!!";
+                        break;
+                }
+            }
+            ?>
+        </div>
+
         <div class="tbl-header">
             <table cellpadding="0" cellspacing="0" border="0">
                 <thead>
@@ -12,6 +25,7 @@
                 </thead>
             </table>
         </div>
+
         <div class="tbl-content">
             <table cellpadding="0" cellspacing="0" border="0">
                 <tbody>

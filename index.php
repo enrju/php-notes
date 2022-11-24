@@ -42,7 +42,9 @@ try {
                     break;
                 case 'list':
                     $viewParams = [
-                        'notes' => $noteModel->list()
+                        'notes' => $noteModel->list(),
+                        'before' => $request->getQueryStringParam('before'),
+                        'id' => $request->getQueryStringParam('id')
                     ];
                     break;
                 case 'create':
@@ -59,9 +61,6 @@ try {
                         'title' => $request->getPostBodyParam('title'),
                         'description' => $request->getPostBodyParam('description')
                     ]);
-                    // dump($insertedId);
-
-                    // $viewParams = [];
 
                     header("Location: /?before=created&id=$insertedId");
                     break;
