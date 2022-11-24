@@ -19,10 +19,12 @@ $configuration = require_once("config/config.php");
 use App\Exception\AppException;
 use App\Model\NoteModel;
 use App\Request;
+use App\View;
 
 try {
     $noteModel = new NoteModel($configuration['db']);
     $request = new Request($_GET, $_POST, $_SERVER);
+    $view = new View();
 
     $httpMethod = $request->getHTTPMethod();
     $action = $request->getQueryStringParam('action');
@@ -47,6 +49,8 @@ try {
         default:
             throw new AppException('Nieobsługiwana metoda HTTP');
     }
+
+    $view->render($action);
 
     // $insertedId = $noteModel->create([
     //     'title' => '--- testowy ---',
