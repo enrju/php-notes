@@ -41,10 +41,14 @@ try {
                     }
                     break;
                 case 'list':
-                default:
                     $viewParams = [
                         'notes' => $noteModel->list()
                     ];
+                    break;
+                case 'create':
+                    $viewParams = [];
+                    break;
+                default:
                     break;
             }
             break;
