@@ -35,12 +35,13 @@ try {
             switch ($action) {
                 case 'show':
                     if ($id) {
-                        dump($noteModel->get($id));
+                        $viewParams = [
+                            'note' => $noteModel->get($id)
+                        ];
                     }
                     break;
                 case 'list':
                 default:
-                    // dump($noteModel->list());
                     $viewParams = [
                         'notes' => $noteModel->list()
                     ];
