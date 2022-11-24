@@ -19,6 +19,21 @@
             ?>
         </div>
 
+        <div class="message">
+            <?php
+            if (!empty($params['error'])) {
+                switch ($params['error']) {
+                    case 'noteNotFound':
+                        echo 'Notatka nie została znaleziona !!!';
+                        break;
+                    case 'missingNoteId':
+                        echo 'Niepoprawny identyfikator notatki !!!';
+                        break;
+                }
+            }
+            ?>
+        </div>
+
         <div class="tbl-header">
             <table cellpadding="0" cellspacing="0" border="0">
                 <thead>
