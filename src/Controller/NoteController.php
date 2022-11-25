@@ -68,6 +68,17 @@ class NoteController
         return $viewParams;
     }
 
+    private function GETdeleteAction(): array
+    {
+        $id = $this->getIdFromQueryString();
+
+        $viewParams = [
+            'note' => $this->noteModel->get($id)
+        ];
+
+        return $viewParams;
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -90,13 +101,10 @@ class NoteController
                         $viewParams = $this->GETeditAction();
                         break;
                     case 'delete':
-                        $id = $this->getIdFromQueryString();
-
-                        $viewParams = [
-                            'note' => $this->noteModel->get($id)
-                        ];
+                        $viewParams = $this->GETdeleteAction();
                         break;
                     default:
+                        $viewParams = $this->GETlistAction();
                         break;
                 }
                 break;
