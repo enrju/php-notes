@@ -88,7 +88,7 @@ class NoteController
 
                         break;
                     case 'edit':
-                        $editedId = (int)($this->request->getPostBodyParam('id'));
+                        $editedId = $this->getIdFromPost();
 
                         $this->noteModel->edit(
                             $editedId,
@@ -103,7 +103,7 @@ class NoteController
 
                         break;
                     case 'delete':
-                        $deletedId = (int)($this->request->getPostBodyParam('id'));
+                        $deletedId = $this->getIdFromPost();
 
                         $this->noteModel->delete($deletedId);
 
@@ -123,6 +123,18 @@ class NoteController
     private function getIdFromQueryString(): int
     {
         $id = (int) ($this->request->getQueryStringParam('id'));
+
+        if (!$id) {
+            header("Location: /?error=missingNoteId");
+            exit();
+        }
+
+        return $id;
+    }
+
+    private function getIdFromPost(): int
+    {
+        $id = (int)($this->request->getPostBodyParam('id'));
 
         if (!$id) {
             header("Location: /?error=missingNoteId");
