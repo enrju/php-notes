@@ -39,12 +39,7 @@ class NoteController
             case 'GET':
                 switch ($action) {
                     case 'show':
-                        $id = (int) ($this->request->getQueryStringParam('id'));
-
-                        if (!$id) {
-                            header("Location: /?error=missingNoteId");
-                            exit();
-                        }
+                        $id = $this->getIdFromQueryString();
 
                         $viewParams = [
                             'note' => $this->noteModel->get($id)
@@ -63,24 +58,14 @@ class NoteController
                         $viewParams = [];
                         break;
                     case 'edit':
-                        $id = (int) ($this->request->getQueryStringParam('id'));
-
-                        if (!$id) {
-                            header("Location: /?error=missingNoteId");
-                            exit();
-                        }
+                        $id = $this->getIdFromQueryString();
 
                         $viewParams = [
                             'note' => $this->noteModel->get($id)
                         ];
                         break;
                     case 'delete':
-                        $id = (int) ($this->request->getQueryStringParam('id'));
-
-                        if (!$id) {
-                            header("Location: /?error=missingNoteId");
-                            exit();
-                        }
+                        $id = $this->getIdFromQueryString();
 
                         $viewParams = [
                             'note' => $this->noteModel->get($id)
@@ -133,5 +118,17 @@ class NoteController
         }
 
         $this->view->render($action, $viewParams);
+    }
+
+    private function getIdFromQueryString(): int
+    {
+        $id = (int) ($this->request->getQueryStringParam('id'));
+
+        if (!$id) {
+            header("Location: /?error=missingNoteId");
+            exit();
+        }
+
+        return $id;
     }
 }
