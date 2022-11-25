@@ -110,6 +110,18 @@ class NoteController
         ]);
     }
 
+    private function POSTdeleteAction(): void
+    {
+        $deletedId = $this->getIdFromPost();
+
+        $this->noteModel->delete($deletedId);
+
+        $this->redirect('/', [
+            'before' => 'deleted',
+            'id' => "$deletedId"
+        ]);
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -148,15 +160,7 @@ class NoteController
                         $this->POSTeditAction();
                         break;
                     case 'delete':
-                        $deletedId = $this->getIdFromPost();
-
-                        $this->noteModel->delete($deletedId);
-
-                        $this->redirect('/', [
-                            'before' => 'deleted',
-                            'id' => "$deletedId"
-                        ]);
-
+                        $this->POSTdeleteAction();
                         break;
                 }
                 break;
