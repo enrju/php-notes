@@ -36,46 +36,22 @@ class NoteController
         try {
             $httpMethod = $this->request->getHTTPMethod();
             $action = $this->request->getQueryStringParam('action', 'list');
+
+            $methodName = $httpMethod . $action . 'Action';
+
+            if (!method_exists($this, $methodName)) {
+                $httpMethod = 'GET';
+                $methodName = 'GETlistAction';
+            }
+
             $viewParams = [];
 
             switch ($httpMethod) {
                 case 'GET':
-                    switch ($action) {
-                        case 'show':
-                            $viewParams = $this->GETshowAction();
-                            break;
-                        case 'list':
-                            $viewParams = $this->GETlistAction();
-                            break;
-                        case 'create':
-                            $viewParams = $this->GETcreateAction();
-                            break;
-                        case 'edit':
-                            $viewParams = $this->GETeditAction();
-                            break;
-                        case 'delete':
-                            $viewParams = $this->GETdeleteAction();
-                            break;
-                        default:
-                            $viewParams = $this->GETlistAction();
-                            break;
-                    }
+                    $viewParams = $this->$methodName();
                     break;
                 case 'POST':
-                    switch ($action) {
-                        case 'create':
-                            $this->POSTcreateAction();
-                            break;
-                        case 'edit':
-                            $this->POSTeditAction();
-                            break;
-                        case 'delete':
-                            $this->POSTdeleteAction();
-                            break;
-                        default:
-                            $this->redirect('/', ['action' => 'list']);
-                            break;
-                    }
+                    $this->$methodName();
                     break;
                 default:
                     throw new AppException('Nieobsługiwana metoda HTTP');
