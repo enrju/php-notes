@@ -83,8 +83,10 @@ class NoteController
                             'description' => $this->request->getPostBodyParam('description')
                         ]);
 
-                        header("Location: /?before=created&id=$insertedId");
-                        exit();
+                        $this->redirect('/', [
+                            'before' => 'created',
+                            'id' => "$insertedId"
+                        ]);
 
                         break;
                     case 'edit':
@@ -98,8 +100,10 @@ class NoteController
                             ]
                         );
 
-                        header("Location: /?before=edited&id=$editedId");
-                        exit();
+                        $this->redirect('/', [
+                            'before' => 'edited',
+                            'id' => "$editedId"
+                        ]);
 
                         break;
                     case 'delete':
@@ -107,8 +111,10 @@ class NoteController
 
                         $this->noteModel->delete($deletedId);
 
-                        header("Location: /?before=deleted&id=$deletedId");
-                        exit();
+                        $this->redirect('/', [
+                            'before' => 'deleted',
+                            'id' => "$deletedId"
+                        ]);
 
                         break;
                 }
@@ -142,5 +148,25 @@ class NoteController
         }
 
         return $id;
+    }
+
+    private function redirect(string $to, array $params): void
+    {
+        $location = $to;
+
+        if (count($params)) {
+            $queryParams = [];
+
+            foreach ($params as $key => $value) {
+                $queryParams[] = urlencode($key) . '=' . urlencode($value);
+            }
+
+            $queryParams = implode('&', $queryParams);
+
+            $location .= '?' . $queryParams;
+        }
+
+        header("Location: $location");
+        exit;
     }
 }
