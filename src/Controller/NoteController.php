@@ -52,6 +52,11 @@ class NoteController
         return $viewParams;
     }
 
+    private function GETcreateAction(): array
+    {
+        return [];
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -68,7 +73,7 @@ class NoteController
                         $viewParams = $this->GETlistAction();
                         break;
                     case 'create':
-                        $viewParams = [];
+                        $viewParams = $this->GETcreateAction();
                         break;
                     case 'edit':
                         $id = $this->getIdFromQueryString();
