@@ -14,14 +14,21 @@ spl_autoload_register(function (string $classNamespace) {
 });
 
 require_once("src/Utils/debug.php");
-$configuration = require_once("config/config.php");
 
+use App\Exception\ConfigurationException;
+use App\Controller\NoteController;
 use App\Exception\AppException;
-use App\Model\NoteModel;
 use App\Request;
-use App\View;
+
+$configuration = require_once("config/config.php");
+$request = new Request($_GET, $_POST, $_SERVER);
 
 try {
+    $noteController = new NoteController($configuration, $request);
+    $noteController->run();
+} catch (ConfigurationException $e) {
+    echo "<h1>wystapił błąd w aplikacji</h1>";
+    echo 'Problem z konfiguracją - proszę skontaktować się z administratorem xxx@xxx.com';
 } catch (AppException $e) {
     echo '<h1>Wystąpił błąd w aplikacji</h1>';
     echo '<h3>' . $e->getMessage() . '</h3>';
