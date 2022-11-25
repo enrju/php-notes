@@ -79,6 +79,19 @@ class NoteController
         return $viewParams;
     }
 
+    private function POSTcreateAction(): void
+    {
+        $insertedId = $this->noteModel->create([
+            'title' => $this->request->getPostBodyParam('title'),
+            'description' => $this->request->getPostBodyParam('description')
+        ]);
+
+        $this->redirect('/', [
+            'before' => 'created',
+            'id' => "$insertedId"
+        ]);
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -111,16 +124,7 @@ class NoteController
             case 'POST':
                 switch ($action) {
                     case 'create':
-                        $insertedId = $this->noteModel->create([
-                            'title' => $this->request->getPostBodyParam('title'),
-                            'description' => $this->request->getPostBodyParam('description')
-                        ]);
-
-                        $this->redirect('/', [
-                            'before' => 'created',
-                            'id' => "$insertedId"
-                        ]);
-
+                        $this->POSTcreateAction();
                         break;
                     case 'edit':
                         $editedId = $this->getIdFromPost();
