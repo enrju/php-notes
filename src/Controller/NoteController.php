@@ -40,6 +40,18 @@ class NoteController
         return $viewParams;
     }
 
+    private function GETlistAction(): array
+    {
+        $viewParams = [
+            'notes' => $this->noteModel->list(),
+            'before' => $this->request->getQueryStringParam('before'),
+            'id' => $this->request->getQueryStringParam('id'),
+            'error' => $this->request->getQueryStringParam('error')
+        ];
+
+        return $viewParams;
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -53,12 +65,7 @@ class NoteController
                         $viewParams = $this->GETshowAction();
                         break;
                     case 'list':
-                        $viewParams = [
-                            'notes' => $this->noteModel->list(),
-                            'before' => $this->request->getQueryStringParam('before'),
-                            'id' => $this->request->getQueryStringParam('id'),
-                            'error' => $this->request->getQueryStringParam('error')
-                        ];
+                        $viewParams = $this->GETlistAction();
                         break;
                     case 'create':
                         $viewParams = [];
