@@ -54,13 +54,13 @@ class NoteModel extends AbstractModel implements ModelInterface
     public function create(array $data): int
     {
         try {
-            $title = $data['title'];
-            $description = $data['description'];
-            $created = date('Y-m-d H:i:s');
+            $title = $this->conn->quote($data['title']);
+            $description = $this->conn->quote($data['description']);
+            $created = $this->conn->quote(date('Y-m-d H:i:s'));
 
             $query = "
             INSERT INTO notes(title, description, created)
-            VALUES('$title', '$description', '$created')
+            VALUES($title, $description, $created)
             ";
 
             $this->conn->exec($query);
@@ -74,12 +74,12 @@ class NoteModel extends AbstractModel implements ModelInterface
     public function edit(int $id, array $data): void
     {
         try {
-            $title = $data['title'];
-            $description = $data['description'];
+            $title = $this->conn->quote($data['title']);
+            $description = $this->conn->quote($data['description']);
 
             $query = "
             UPDATE notes
-            SET title = '$title', description = '$description'
+            SET title = $title, description = $description
             WHERE id = $id
             ";
 
