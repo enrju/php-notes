@@ -57,6 +57,17 @@ class NoteController
         return [];
     }
 
+    private function GETeditAction(): array
+    {
+        $id = $this->getIdFromQueryString();
+
+        $viewParams = [
+            'note' => $this->noteModel->get($id)
+        ];
+
+        return $viewParams;
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -76,11 +87,7 @@ class NoteController
                         $viewParams = $this->GETcreateAction();
                         break;
                     case 'edit':
-                        $id = $this->getIdFromQueryString();
-
-                        $viewParams = [
-                            'note' => $this->noteModel->get($id)
-                        ];
+                        $viewParams = $this->GETeditAction();
                         break;
                     case 'delete':
                         $id = $this->getIdFromQueryString();
