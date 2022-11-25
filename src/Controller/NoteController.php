@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Exception\AppException;
 use App\Exception\ConfigurationException;
+use App\Exception\NotFoundException;
+use App\Exception\StorageException;
 use App\Model\NoteModel;
 use App\Request;
 use App\View;
@@ -27,6 +29,111 @@ class NoteController
         $this->request = $request;
         $this->noteModel = new NoteModel($configuration['db']);
         $this->view = new View();
+    }
+
+    public function run(): void
+    {
+        try {
+            $httpMethod = $this->request->getHTTPMethod();
+            $action = $this->request->getQueryStringParam('action', 'list');
+            $viewParams = [];
+
+            switch ($httpMethod) {
+                case 'GET':
+                    switch ($action) {
+                        case 'show':
+                            $viewParams = $this->GETshowAction();
+                            break;
+                        case 'list':
+                            $viewParams = $this->GETlistAction();
+                            break;
+                        case 'create':
+                            $viewParams = $this->GETcreateAction();
+                            break;
+                        case 'edit':
+                            $viewParams = $this->GETeditAction();
+                            break;
+                        case 'delete':
+                            $viewParams = $this->GETdeleteAction();
+                            break;
+                        default:
+                            $viewParams = $this->GETlistAction();
+                            break;
+                    }
+                    break;
+                case 'POST':
+                    switch ($action) {
+                        case 'create':
+                            $this->POSTcreateAction();
+                            break;
+                        case 'edit':
+                            $this->POSTeditAction();
+                            break;
+                        case 'delete':
+                            $this->POSTdeleteAction();
+                            break;
+                        default:
+                            $this->redirect('/', ['action' => 'list']);
+                            break;
+                    }
+                    break;
+                default:
+                    throw new AppException('Nieobsługiwana metoda HTTP');
+            }
+
+            $this->view->render($action, $viewParams);
+        } catch (StorageException $e) {
+            $this->view->render(
+                'error',
+                ['message', $e->getMessage()]
+            );
+        } catch (NotFoundException $e) {
+            $this->redirect('/', ['error' => 'noteNotFound']);
+        }
+    }
+
+    private function getIdFromQueryString(): int
+    {
+        $id = (int) ($this->request->getQueryStringParam('id'));
+
+        if (!$id) {
+            header("Location: /?error=missingNoteId");
+            exit();
+        }
+
+        return $id;
+    }
+
+    private function getIdFromPost(): int
+    {
+        $id = (int)($this->request->getPostBodyParam('id'));
+
+        if (!$id) {
+            header("Location: /?error=missingNoteId");
+            exit();
+        }
+
+        return $id;
+    }
+
+    private function redirect(string $to, array $params): void
+    {
+        $location = $to;
+
+        if (count($params)) {
+            $queryParams = [];
+
+            foreach ($params as $key => $value) {
+                $queryParams[] = urlencode($key) . '=' . urlencode($value);
+            }
+
+            $queryParams = implode('&', $queryParams);
+
+            $location .= '?' . $queryParams;
+        }
+
+        header("Location: $location");
+        exit;
     }
 
     private function GETshowAction(): array
@@ -120,100 +227,5 @@ class NoteController
             'before' => 'deleted',
             'id' => "$deletedId"
         ]);
-    }
-
-    public function run(): void
-    {
-        $httpMethod = $this->request->getHTTPMethod();
-        $action = $this->request->getQueryStringParam('action', 'list');
-        $viewParams = [];
-
-        switch ($httpMethod) {
-            case 'GET':
-                switch ($action) {
-                    case 'show':
-                        $viewParams = $this->GETshowAction();
-                        break;
-                    case 'list':
-                        $viewParams = $this->GETlistAction();
-                        break;
-                    case 'create':
-                        $viewParams = $this->GETcreateAction();
-                        break;
-                    case 'edit':
-                        $viewParams = $this->GETeditAction();
-                        break;
-                    case 'delete':
-                        $viewParams = $this->GETdeleteAction();
-                        break;
-                    default:
-                        $viewParams = $this->GETlistAction();
-                        break;
-                }
-                break;
-            case 'POST':
-                switch ($action) {
-                    case 'create':
-                        $this->POSTcreateAction();
-                        break;
-                    case 'edit':
-                        $this->POSTeditAction();
-                        break;
-                    case 'delete':
-                        $this->POSTdeleteAction();
-                        break;
-                }
-                break;
-            default:
-                throw new AppException('Nieobsługiwana metoda HTTP');
-        }
-
-        $this->view->render($action, $viewParams);
-    }
-
-
-
-    private function getIdFromQueryString(): int
-    {
-        $id = (int) ($this->request->getQueryStringParam('id'));
-
-        if (!$id) {
-            header("Location: /?error=missingNoteId");
-            exit();
-        }
-
-        return $id;
-    }
-
-    private function getIdFromPost(): int
-    {
-        $id = (int)($this->request->getPostBodyParam('id'));
-
-        if (!$id) {
-            header("Location: /?error=missingNoteId");
-            exit();
-        }
-
-        return $id;
-    }
-
-    private function redirect(string $to, array $params): void
-    {
-        $location = $to;
-
-        if (count($params)) {
-            $queryParams = [];
-
-            foreach ($params as $key => $value) {
-                $queryParams[] = urlencode($key) . '=' . urlencode($value);
-            }
-
-            $queryParams = implode('&', $queryParams);
-
-            $location .= '?' . $queryParams;
-        }
-
-        header("Location: $location");
-        exit;
     }
 }
