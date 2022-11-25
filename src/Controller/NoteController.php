@@ -29,6 +29,17 @@ class NoteController
         $this->view = new View();
     }
 
+    private function GETshowAction(): array
+    {
+        $id = $this->getIdFromQueryString();
+
+        $viewParams = [
+            'note' => $this->noteModel->get($id)
+        ];
+
+        return $viewParams;
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -39,12 +50,7 @@ class NoteController
             case 'GET':
                 switch ($action) {
                     case 'show':
-                        $id = $this->getIdFromQueryString();
-
-                        $viewParams = [
-                            'note' => $this->noteModel->get($id)
-                        ];
-
+                        $viewParams = $this->GETshowAction();
                         break;
                     case 'list':
                         $viewParams = [
@@ -125,6 +131,8 @@ class NoteController
 
         $this->view->render($action, $viewParams);
     }
+
+
 
     private function getIdFromQueryString(): int
     {
