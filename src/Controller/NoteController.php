@@ -92,6 +92,24 @@ class NoteController
         ]);
     }
 
+    private function POSTeditAction(): void
+    {
+        $editedId = $this->getIdFromPost();
+
+        $this->noteModel->edit(
+            $editedId,
+            [
+                'title' => $this->request->getPostBodyParam('title'),
+                'description' => $this->request->getPostBodyParam('description')
+            ]
+        );
+
+        $this->redirect('/', [
+            'before' => 'edited',
+            'id' => "$editedId"
+        ]);
+    }
+
     public function run(): void
     {
         $httpMethod = $this->request->getHTTPMethod();
@@ -127,21 +145,7 @@ class NoteController
                         $this->POSTcreateAction();
                         break;
                     case 'edit':
-                        $editedId = $this->getIdFromPost();
-
-                        $this->noteModel->edit(
-                            $editedId,
-                            [
-                                'title' => $this->request->getPostBodyParam('title'),
-                                'description' => $this->request->getPostBodyParam('description')
-                            ]
-                        );
-
-                        $this->redirect('/', [
-                            'before' => 'edited',
-                            'id' => "$editedId"
-                        ]);
-
+                        $this->POSTeditAction();
                         break;
                     case 'delete':
                         $deletedId = $this->getIdFromPost();
