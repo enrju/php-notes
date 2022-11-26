@@ -4,115 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Exception\AppException;
-use App\Exception\ConfigurationException;
-use App\Exception\NotFoundException;
-use App\Exception\StorageException;
-use App\Model\NoteModel;
-use App\Request;
-use App\View;
 
-class NoteController
+
+
+class NoteController extends AbstractController
 {
-    private array $configuration = [];
-    private NoteModel $noteModel;
-    private Request $request;
-    private View $view;
-
-    public function __construct(array $configuration, Request $request)
-    {
-        if (empty($configuration['db'])) {
-            throw new ConfigurationException('Problem z konfiguracją');
-        }
-
-        $this->configuration = $configuration;
-        $this->request = $request;
-        $this->noteModel = new NoteModel($configuration['db']);
-        $this->view = new View();
-    }
-
-    public function run(): void
-    {
-        try {
-            $httpMethod = $this->request->getHTTPMethod();
-            $action = $this->request->getQueryStringParam('action', 'list');
-
-            $methodName = $httpMethod . $action . 'Action';
-
-            if (!method_exists($this, $methodName)) {
-                $httpMethod = 'GET';
-                $methodName = 'GETlistAction';
-            }
-
-            $viewParams = [];
-
-            switch ($httpMethod) {
-                case 'GET':
-                    $viewParams = $this->$methodName();
-                    break;
-                case 'POST':
-                    $this->$methodName();
-                    break;
-                default:
-                    throw new AppException('Nieobsługiwana metoda HTTP');
-            }
-
-            $this->view->render($action, $viewParams);
-        } catch (StorageException $e) {
-            $this->view->render(
-                'error',
-                ['message', $e->getMessage()]
-            );
-        } catch (NotFoundException $e) {
-            $this->redirect('/', ['error' => 'noteNotFound']);
-        }
-    }
-
-    private function getIdFromQueryString(): int
-    {
-        $id = (int) ($this->request->getQueryStringParam('id'));
-
-        if (!$id) {
-            header("Location: /?error=missingNoteId");
-            exit();
-        }
-
-        return $id;
-    }
-
-    private function getIdFromPost(): int
-    {
-        $id = (int)($this->request->getPostBodyParam('id'));
-
-        if (!$id) {
-            header("Location: /?error=missingNoteId");
-            exit();
-        }
-
-        return $id;
-    }
-
-    private function redirect(string $to, array $params): void
-    {
-        $location = $to;
-
-        if (count($params)) {
-            $queryParams = [];
-
-            foreach ($params as $key => $value) {
-                $queryParams[] = urlencode($key) . '=' . urlencode($value);
-            }
-
-            $queryParams = implode('&', $queryParams);
-
-            $location .= '?' . $queryParams;
-        }
-
-        header("Location: $location");
-        exit;
-    }
-
-    private function GETshowAction(): array
+    protected function GETshowAction(): array
     {
         $id = $this->getIdFromQueryString();
 
@@ -123,7 +20,7 @@ class NoteController
         return $viewParams;
     }
 
-    private function GETlistAction(): array
+    protected function GETlistAction(): array
     {
         $viewParams = [
             'notes' => $this->noteModel->list(),
@@ -135,12 +32,12 @@ class NoteController
         return $viewParams;
     }
 
-    private function GETcreateAction(): array
+    protected function GETcreateAction(): array
     {
         return [];
     }
 
-    private function GETeditAction(): array
+    protected function GETeditAction(): array
     {
         $id = $this->getIdFromQueryString();
 
@@ -151,7 +48,7 @@ class NoteController
         return $viewParams;
     }
 
-    private function GETdeleteAction(): array
+    protected function GETdeleteAction(): array
     {
         $id = $this->getIdFromQueryString();
 
@@ -162,7 +59,7 @@ class NoteController
         return $viewParams;
     }
 
-    private function POSTcreateAction(): void
+    protected function POSTcreateAction(): void
     {
         $insertedId = $this->noteModel->create([
             'title' => $this->request->getPostBodyParam('title'),
@@ -175,7 +72,7 @@ class NoteController
         ]);
     }
 
-    private function POSTeditAction(): void
+    protected function POSTeditAction(): void
     {
         $editedId = $this->getIdFromPost();
 
@@ -193,7 +90,7 @@ class NoteController
         ]);
     }
 
-    private function POSTdeleteAction(): void
+    protected function POSTdeleteAction(): void
     {
         $deletedId = $this->getIdFromPost();
 
