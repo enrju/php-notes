@@ -14,120 +14,21 @@ spl_autoload_register(function (string $classNamespace) {
 });
 
 require_once("src/Utils/debug.php");
-$configuration = require_once("config/config.php");
 
+use App\Exception\ConfigurationException;
+use App\Controller\NoteController;
 use App\Exception\AppException;
-use App\Model\NoteModel;
 use App\Request;
-use App\View;
+
+$configuration = require_once("config/config.php");
+$request = new Request($_GET, $_POST, $_SERVER);
 
 try {
-    $noteModel = new NoteModel($configuration['db']);
-    $request = new Request($_GET, $_POST, $_SERVER);
-    $view = new View();
-
-    $httpMethod = $request->getHTTPMethod();
-    $action = $request->getQueryStringParam('action', 'list');
-    $viewParams = [];
-
-    switch ($httpMethod) {
-        case 'GET':
-            switch ($action) {
-                case 'show':
-                    $id = (int) ($request->getQueryStringParam('id'));
-
-                    if (!$id) {
-                        header("Location: /?error=missingNoteId");
-                        exit();
-                    }
-
-                    $viewParams = [
-                        'note' => $noteModel->get($id)
-                    ];
-
-                    break;
-                case 'list':
-                    $viewParams = [
-                        'notes' => $noteModel->list(),
-                        'before' => $request->getQueryStringParam('before'),
-                        'id' => $request->getQueryStringParam('id'),
-                        'error' => $request->getQueryStringParam('error')
-                    ];
-                    break;
-                case 'create':
-                    $viewParams = [];
-                    break;
-                case 'edit':
-                    $id = (int) ($request->getQueryStringParam('id'));
-
-                    if (!$id) {
-                        header("Location: /?error=missingNoteId");
-                        exit();
-                    }
-
-                    $viewParams = [
-                        'note' => $noteModel->get($id)
-                    ];
-                    break;
-                case 'delete':
-                    $id = (int) ($request->getQueryStringParam('id'));
-
-                    if (!$id) {
-                        header("Location: /?error=missingNoteId");
-                        exit();
-                    }
-
-                    $viewParams = [
-                        'note' => $noteModel->get($id)
-                    ];
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case 'POST':
-            switch ($action) {
-                case 'create':
-                    $insertedId = $noteModel->create([
-                        'title' => $request->getPostBodyParam('title'),
-                        'description' => $request->getPostBodyParam('description')
-                    ]);
-
-                    header("Location: /?before=created&id=$insertedId");
-                    exit();
-
-                    break;
-                case 'edit':
-                    $editedId = (int)($request->getPostBodyParam('id'));
-
-                    $noteModel->edit(
-                        $editedId,
-                        [
-                            'title' => $request->getPostBodyParam('title'),
-                            'description' => $request->getPostBodyParam('description')
-                        ]
-                    );
-
-                    header("Location: /?before=edited&id=$editedId");
-                    exit();
-
-                    break;
-                case 'delete':
-                    $deletedId = (int)($request->getPostBodyParam('id'));
-
-                    $noteModel->delete($deletedId);
-
-                    header("Location: /?before=deleted&id=$deletedId");
-                    exit();
-
-                    break;
-            }
-            break;
-        default:
-            throw new AppException('Nieobsługiwana metoda HTTP');
-    }
-
-    $view->render($action, $viewParams);
+    $noteController = new NoteController($configuration, $request);
+    $noteController->run();
+} catch (ConfigurationException $e) {
+    echo "<h1>wystapił błąd w aplikacji</h1>";
+    echo 'Problem z konfiguracją - proszę skontaktować się z administratorem xxx@xxx.com';
 } catch (AppException $e) {
     echo '<h1>Wystąpił błąd w aplikacji</h1>';
     echo '<h3>' . $e->getMessage() . '</h3>';
