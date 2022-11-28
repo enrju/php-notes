@@ -35,7 +35,9 @@ class NoteModel extends AbstractModel implements ModelInterface
 
     public function list(
         string $sortBy,
-        string $sortOrder
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
     ): array {
         try {
             if (!in_array($sortBy, ['created', 'title'])) {
@@ -46,10 +48,14 @@ class NoteModel extends AbstractModel implements ModelInterface
                 $sortBy = 'desc';
             }
 
+            $offset = ($pageNumber - 1) * $pageSize;
+            $limit = $pageSize;
+
             $query = "
             SELECT id, title, created
             FROM notes
             ORDER BY $sortBy $sortOrder
+            LIMIT $offset, $limit
             ";
 
             $result = $this->conn->query($query);
@@ -108,6 +114,26 @@ class NoteModel extends AbstractModel implements ModelInterface
             $this->conn->exec($query);
         } catch (Throwable $e) {
             throw new StorageException('Nie udało się skasować notatki', 400, $e);
+        }
+    }
+
+    public function count(): int
+    {
+        try {
+            $query = "SELECT count(*) AS count FROM notes";
+
+            $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+
+            $result = $result->fetch();
+
+            if ($result) {
+                return (int) $result['count'];
+            }
+
+            return 0;
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się pobrać liczby wszystkich notatek', 400, $e);
+            exit();
         }
     }
 }

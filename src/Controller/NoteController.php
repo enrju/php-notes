@@ -6,6 +6,9 @@ namespace App\Controller;
 
 class NoteController extends AbstractController
 {
+    private const PAGE_NUMBER = 1;
+    private const PAGE_SIZE = 10;
+
     protected function GETshowAction(): array
     {
         $id = $this->getIdFromQueryString();
@@ -22,13 +25,32 @@ class NoteController extends AbstractController
         $sortBy = $this->request->getQueryStringParam('sortby', 'title');
         $sortOrder = $this->request->getQueryStringParam('sortorder', 'asc');
 
-        $notes = $this->noteModel->list($sortBy, $sortOrder);
+        $pageNumber = (int) $this->request->getQueryStringParam('pagenumber', self::PAGE_NUMBER);
+        $pageSize = (int) $this->request->getQueryStringParam('pagesize', self::PAGE_SIZE);
+
+        if (!in_array($pageSize, [1, 5, 10, 25])) {
+            $pageSize = self::PAGE_SIZE;
+        }
+
+        $notes = $this->noteModel->list(
+            $sortBy,
+            $sortOrder,
+            $pageNumber,
+            $pageSize
+        );
+
+        $notesCount = $this->noteModel->count();
 
         $viewParams = [
             'notes' => $notes,
             'sort' => [
                 'by' => $sortBy,
                 'order' => $sortOrder,
+            ],
+            'page' => [
+                'number' => $pageNumber,
+                'size' => $pageSize,
+                'pages' => (int) ceil($notesCount / $pageSize)
             ],
             'before' => $this->request->getQueryStringParam('before'),
             'id' => $this->request->getQueryStringParam('id'),
