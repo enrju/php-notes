@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-
-
-
 class NoteController extends AbstractController
 {
     protected function GETshowAction(): array
@@ -22,8 +19,17 @@ class NoteController extends AbstractController
 
     protected function GETlistAction(): array
     {
+        $sortBy = $this->request->getQueryStringParam('sortby', 'title');
+        $sortOrder = $this->request->getQueryStringParam('sortorder', 'asc');
+
+        $notes = $this->noteModel->list($sortBy, $sortOrder);
+
         $viewParams = [
-            'notes' => $this->noteModel->list(),
+            'notes' => $notes,
+            'sort' => [
+                'by' => $sortBy,
+                'order' => $sortOrder,
+            ],
             'before' => $this->request->getQueryStringParam('before'),
             'id' => $this->request->getQueryStringParam('id'),
             'error' => $this->request->getQueryStringParam('error')
