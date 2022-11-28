@@ -110,4 +110,24 @@ class NoteModel extends AbstractModel implements ModelInterface
             throw new StorageException('Nie udało się skasować notatki', 400, $e);
         }
     }
+
+    public function count(): int
+    {
+        try {
+            $query = "SELECT count(*) AS count FROM notes";
+
+            $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+
+            $result = $result->fetch();
+
+            if ($result) {
+                return (int) $result['count'];
+            }
+
+            return 0;
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się pobrać liczby wszystkich notatek', 400, $e);
+            exit();
+        }
+    }
 }
