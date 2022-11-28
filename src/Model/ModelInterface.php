@@ -8,7 +8,10 @@ interface ModelInterface
 {
     public function get(int $id): array;
 
-    public function list(): array;
+    public function list(
+        string $sortBy,
+        string $sortOrder
+    ): array;
 
     public function create(array $data): int;
 
