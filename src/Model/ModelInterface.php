@@ -10,7 +10,9 @@ interface ModelInterface
 
     public function list(
         string $sortBy,
-        string $sortOrder
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
     ): array;
 
     public function create(array $data): int;
@@ -18,4 +20,6 @@ interface ModelInterface
     public function edit(int $id, array $data): void;
 
     public function delete(int $id): void;
+
+    public function count(): int;
 }
