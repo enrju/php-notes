@@ -34,6 +34,31 @@
             ?>
         </div>
 
+        <?php
+        if ($params['sort']) {
+            $by = $params['sort']['by'] ?? 'title';
+            $order = $params['sort']['order'] ?? 'desc';
+        }
+        ?>
+
+        <div>
+            <form action="/" class="settings-form" method="GET">
+                <div>
+                    <div>Sortuj po: </div>
+                    <label>Tytule: <input type="radio" name="sortby" value="title" <?php echo $by === 'title' ? 'checked' : '' ?>></label>
+                    <label>Dacie: <input type="radio" name="sortby" value="created" <?php echo $by === 'created' ? 'checked' : '' ?>></label>
+                </div>
+
+                <div>
+                    <div>Kierunek sortowania: </div>
+                    <label>Rosnąco: <input type="radio" name="sortorder" value="asc" <?php echo $order === 'asc' ? 'checked' : '' ?>></label>
+                    <label>Malejąco: <input type="radio" name="sortorder" value="desc" <?php echo $order === 'desc' ? 'checked' : '' ?>></label>
+                </div>
+
+                <input type="submit" value="Sortuj">
+            </form>
+        </div>
+
         <div class="tbl-header">
             <table cellpadding="0" cellspacing="0" border="0">
                 <thead>
