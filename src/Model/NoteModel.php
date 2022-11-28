@@ -35,7 +35,9 @@ class NoteModel extends AbstractModel implements ModelInterface
 
     public function list(
         string $sortBy,
-        string $sortOrder
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
     ): array {
         try {
             if (!in_array($sortBy, ['created', 'title'])) {
@@ -46,10 +48,14 @@ class NoteModel extends AbstractModel implements ModelInterface
                 $sortBy = 'desc';
             }
 
+            $offset = ($pageNumber - 1) * $pageSize;
+            $limit = $pageSize;
+
             $query = "
             SELECT id, title, created
             FROM notes
             ORDER BY $sortBy $sortOrder
+            LIMIT $offset, $limit
             ";
 
             $result = $this->conn->query($query);
