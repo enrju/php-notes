@@ -303,6 +303,10 @@ tr>td:nth-child(3) {
   cursor: pointer;
 }
 
+.pagination .current-page button {
+  background-color: crimson;
+}
+
 .settings-form label {
   display: inline-block;
 }
