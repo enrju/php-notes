@@ -33,12 +33,23 @@ class NoteModel extends AbstractModel implements ModelInterface
         return $note;
     }
 
-    public function list(): array
-    {
+    public function list(
+        string $sortBy,
+        string $sortOrder
+    ): array {
         try {
+            if (!in_array($sortBy, ['created', 'title'])) {
+                $sortBy = 'title';
+            }
+
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortBy = 'desc';
+            }
+
             $query = "
             SELECT id, title, created
             FROM notes
+            ORDER BY $sortBy $sortOrder
             ";
 
             $result = $this->conn->query($query);
