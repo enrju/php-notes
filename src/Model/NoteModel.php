@@ -48,6 +48,22 @@ class NoteModel extends AbstractModel implements ModelInterface
         );
     }
 
+    public function search(
+        string $phrase,
+        string $sortBy,
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
+    ): array {
+        return $this->findBy(
+            $phrase,
+            $sortBy,
+            $sortOrder,
+            $pageNumber,
+            $pageSize
+        );
+    }
+
     private function findBy(
         ?string $phrase,
         string $sortBy,
