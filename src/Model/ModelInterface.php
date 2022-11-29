@@ -15,6 +15,14 @@ interface ModelInterface
         int $pageSize
     ): array;
 
+    public function search(
+        string $phrase,
+        string $sortBy,
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
+    ): array;
+
     public function create(array $data): int;
 
     public function edit(int $id, array $data): void;
@@ -22,4 +30,6 @@ interface ModelInterface
     public function delete(int $id): void;
 
     public function count(): int;
+
+    public function searchCount(string $phrase): int;
 }
