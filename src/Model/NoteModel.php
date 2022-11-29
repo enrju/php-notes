@@ -175,4 +175,30 @@ class NoteModel extends AbstractModel implements ModelInterface
             exit();
         }
     }
+
+    public function searchCount(string $phrase): int
+    {
+        try {
+            $phrase = $this->conn->quote('%' . $phrase . '%', PDO::PARAM_STR);
+
+            $query = "
+            SELECT count(*) AS count 
+            FROM notes
+            WHERE title LIKE ($phrase)
+            ";
+
+            $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+
+            $result = $result->fetch();
+
+            if ($result) {
+                return (int) $result['count'];
+            }
+
+            return 0;
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się pobrać liczby wszystkich notatek', 400, $e);
+            exit();
+        }
+    }
 }
