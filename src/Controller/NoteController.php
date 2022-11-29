@@ -22,6 +22,7 @@ class NoteController extends AbstractController
 
     protected function GETlistAction(): array
     {
+        $phrase = $this->request->getQueryStringParam('phrase');
         $sortBy = $this->request->getQueryStringParam('sortby', 'title');
         $sortOrder = $this->request->getQueryStringParam('sortorder', 'asc');
 
@@ -32,17 +33,30 @@ class NoteController extends AbstractController
             $pageSize = self::PAGE_SIZE;
         }
 
-        $notes = $this->noteModel->list(
-            $sortBy,
-            $sortOrder,
-            $pageNumber,
-            $pageSize
-        );
+        if ($phrase) {
+            $notes = $this->noteModel->search(
+                $phrase,
+                $sortBy,
+                $sortOrder,
+                $pageNumber,
+                $pageSize
+            );
 
-        $notesCount = $this->noteModel->count();
+            $notesCount = $this->noteModel->searchCount($phrase);
+        } else {
+            $notes = $this->noteModel->list(
+                $sortBy,
+                $sortOrder,
+                $pageNumber,
+                $pageSize
+            );
+
+            $notesCount = $this->noteModel->count();
+        }
 
         $viewParams = [
             'notes' => $notes,
+            'phrase' => $phrase,
             'sort' => [
                 'by' => $sortBy,
                 'order' => $sortOrder,
