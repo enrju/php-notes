@@ -39,6 +39,22 @@ class NoteModel extends AbstractModel implements ModelInterface
         int $pageNumber,
         int $pageSize
     ): array {
+        return $this->findBy(
+            null,
+            $sortBy,
+            $sortOrder,
+            $pageNumber,
+            $pageSize
+        );
+    }
+
+    private function findBy(
+        ?string $phrase,
+        string $sortBy,
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
+    ): array {
         try {
             if (!in_array($sortBy, ['created', 'title'])) {
                 $sortBy = 'title';
@@ -51,9 +67,16 @@ class NoteModel extends AbstractModel implements ModelInterface
             $offset = ($pageNumber - 1) * $pageSize;
             $limit = $pageSize;
 
+            $sqlWherePart = '';
+            if ($phrase) {
+                $phrase = $this->conn->quote('%' . $phrase . '%', PDO::PARAM_STR);
+                $sqlWherePart = "WHERE title LIKE ($phrase)";
+            }
+
             $query = "
             SELECT id, title, created
             FROM notes
+            $sqlWherePart
             ORDER BY $sortBy $sortOrder
             LIMIT $offset, $limit
             ";
