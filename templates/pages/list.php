@@ -45,10 +45,16 @@
             $pageNumber = $params['page']['number'] ?? 1;
             $pagePages = $params['page']['pages'] ?? 1;
         }
+
+        $phrase = $params['phrase'] ?? null;
         ?>
 
         <div>
             <form action="/" class="settings-form" method="GET">
+                <div>
+                    <label>Wyszukaj: <input type="text" name="phrase" value="<?php echo $phrase ?>"></label>
+                </div>
+
                 <div>
                     <div>Sortuj po: </div>
                     <label>Tytule: <input type="radio" name="sortby" value="title" <?php echo $sortBy === 'title' ? 'checked' : '' ?>></label>
@@ -109,7 +115,7 @@
         </div>
 
         <?php
-        $paginationUrl = "/?sortby=$sortBy&sortorder=$sortOrder&pagesize=$pageSize&pagenumber=";
+        $paginationUrl = "/?phrase=$phrase&sortby=$sortBy&sortorder=$sortOrder&pagesize=$pageSize&pagenumber=";
         ?>
 
         <ul class="pagination">
