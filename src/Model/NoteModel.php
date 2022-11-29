@@ -39,6 +39,38 @@ class NoteModel extends AbstractModel implements ModelInterface
         int $pageNumber,
         int $pageSize
     ): array {
+        return $this->findBy(
+            null,
+            $sortBy,
+            $sortOrder,
+            $pageNumber,
+            $pageSize
+        );
+    }
+
+    public function search(
+        string $phrase,
+        string $sortBy,
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
+    ): array {
+        return $this->findBy(
+            $phrase,
+            $sortBy,
+            $sortOrder,
+            $pageNumber,
+            $pageSize
+        );
+    }
+
+    private function findBy(
+        ?string $phrase,
+        string $sortBy,
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
+    ): array {
         try {
             if (!in_array($sortBy, ['created', 'title'])) {
                 $sortBy = 'title';
@@ -51,9 +83,16 @@ class NoteModel extends AbstractModel implements ModelInterface
             $offset = ($pageNumber - 1) * $pageSize;
             $limit = $pageSize;
 
+            $sqlWherePart = '';
+            if ($phrase) {
+                $phrase = $this->conn->quote('%' . $phrase . '%', PDO::PARAM_STR);
+                $sqlWherePart = "WHERE title LIKE ($phrase)";
+            }
+
             $query = "
             SELECT id, title, created
             FROM notes
+            $sqlWherePart
             ORDER BY $sortBy $sortOrder
             LIMIT $offset, $limit
             ";
@@ -121,6 +160,32 @@ class NoteModel extends AbstractModel implements ModelInterface
     {
         try {
             $query = "SELECT count(*) AS count FROM notes";
+
+            $result = $this->conn->query($query, PDO::FETCH_ASSOC);
+
+            $result = $result->fetch();
+
+            if ($result) {
+                return (int) $result['count'];
+            }
+
+            return 0;
+        } catch (Throwable $e) {
+            throw new StorageException('Nie udało się pobrać liczby wszystkich notatek', 400, $e);
+            exit();
+        }
+    }
+
+    public function searchCount(string $phrase): int
+    {
+        try {
+            $phrase = $this->conn->quote('%' . $phrase . '%', PDO::PARAM_STR);
+
+            $query = "
+            SELECT count(*) AS count 
+            FROM notes
+            WHERE title LIKE ($phrase)
+            ";
 
             $result = $this->conn->query($query, PDO::FETCH_ASSOC);
 
